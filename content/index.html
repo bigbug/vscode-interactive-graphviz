@@ -38,6 +38,9 @@
             <vscode-button id="menu-reset-zoom" appearance="icon" aria-label="Reset view" onclick="reset()">
                 <span class="codicon codicon-refresh"></span>
             </vscode-button>
+            <vscode-button id="menu-reset-zoom" appearance="icon" aria-label="Reset view" onclick="findGlobal('test')">
+                <span class="codicon codicon-refresh"></span>
+            </vscode-button>
         </div>
         <vscode-text-field placeholder="Search ..." id="searchInput">
             <span slot="start" class="codicon codicon-search"></span>
@@ -144,6 +147,36 @@
                 result[a.name] = a.value;
             }
             return result;
+        }
+
+        function findEdges(text) {
+            var $set = $();
+            gv.edges().each((index, edge) => {
+                if(edge.textContent && edge.textContent.indexOf(text)!==-1) {
+                    $set.push(edge);
+                } 
+            })
+            return $set;
+        }
+
+        function findNodes(text) {
+            var $set = $()
+
+            const nodes = gv.nodesByName();
+            for (let [nodeName, node] of Object.entries(nodes)) {
+                if (nodeName.indexOf(text)===-1) {
+                    continue;
+                }
+                $set.push(node)
+            }
+            return $set;
+        }
+
+        function findGlobal(text) {
+            var $set = findEdges(text);
+            $set = $set.add(findNodes(text));
+            gv.highlight($set, true)
+            gv.bringToFront($set)
         }
 
         $(document).ready(function(){
